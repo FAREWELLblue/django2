@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/room.css">
+    <!-- <script src="//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script> -->
+    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script> -->
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> --> 
+    <title>{{ roomname }}</title>
+    <style>
+      .list-group-item{
+          padding: 5px;
+      }
+      #leave{
+          float: right;
+      }
+      #out{
+          position: relative;
+          left:0
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="btn btn-warning" id="leave">退出聊天室</button>
+        <header class="text-center">
+            {{ roomname }}
+        </header>
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-4" id="user_list" >
+                <div class="username btn btn-block " id='btn_modify' >
+                    <h2 id="uname">{{ username }}</h2>
+                    <a>点击修改个人信息</a>
+                    
+                </div>
+                <div>
+                聊天室成员列表
+                </div>
+            </div>
+            <div class="col-md-8 col-sm-8 col-xs-8" id="chat_record">
+                <div class="item"  style='display: none;'>
+                    <span class="speaker" >说话的人</span>
+                    <div class='bubble'>这个是测试用的气泡</div>
+                </div>
+                <div id="bottom"></div>                
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-4" id="file_list">
+                <div class="list-group">
+                    <!-- <a class="list-group-item" href='/static/files/hello.py' download="hello.py"></a> -->
+                </div>
+            </div>
+            <div class="col-md-8 col-sm-8 col-xs-8" id="text_area">
+                <textarea class="form-control" style="height: 65%;"></textarea>
+                <button id="btn" class="btn btn-info">发送</button>
+                <form action="/upload" method="post"  enctype="multipart/form-data" id='upform'>
+                    <div class="glyphicon glyphicon-floppy-open btn" id='upload'></div>
+                    <input type='file' name='myfile' id='up' style="display: none;">
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="modify" class="center-block">
+			<form>
+				<div class="form_group">
+					<label for='n_name'>请输入新用户名:</label>
+					<input type="text" id="n_name" class="form-control">
+				</div>
+				<div class="from_group">
+					<lable for="n_pass">请输入新密码:</lable>
+					<input type="password" id="n_pass" class="form-control">
+				</div>
+				<div class="from_group">
+					<lable for="rn_pass">请重复输入新密码:</lable>
+					<input type="password" id="rn_pass" class="form-control">
+				</div>
+				<div class="form_group">
+					<label for='n_tel'>请输入手机号码:</label>
+					<input type="text" id="n_tel" class="form-control">
+					<div id="msg"></div>
+				</div>
+				<div>
+					<button type="button" class="btn btn-info btn-block" id="modify_btn">提交</button>
+					<button type="button" class="btn btn-danger btn-block cancel" >取消</button>
+				</div>
+			</form>
+		</div>
+<script>
+$("#modify").hide()
+$("#btn_modify").click(function(){
+    $(".container").fadeOut(100)
+    $("#modify").fadeIn(100)
+})
+$(".cancel").click(function(){
+    $("#modify").fadeOut(100)
+    $(".container").fadeIn(100)
+})
+$('#modify_btn').click(function(){
+    $.ajax({
+        url:'/user/modify',
+        type:'post',
+        dataType:'json',
+        data:JSON.stringify({username:$('#n_name').val(),password:$("#n_pass").val(),repassword:$("#rn_pass").val(),tel:$("#n_tel").val()}),
+        contentType:"application/json",
+        success:function(res){
+            console.log(res);
+            if(res['code']==200){
+                console.log('yes')
+                $("#msg").html('修改成功').css('color','green')
+                location.reload()
+            }
+        }
+    })
+})
+    $("#upload").click(function(){
+        f=$('#up')
+        f.click()
+        f.change(function(){
+            console.log(f.val())
+            $("#upform").submit()
+        })
+    })
+    $("#leave").click(function(){
+        // window.location.href='/index'
+        var r=confirm('解散聊天室将同时删除聊天记录和文件.确定解散聊天室?')
+        if (r==true){
+            console.log('true')
+            $.ajax({
+                url:'leave',
+                type:'get',
+                dataType:'json',
+                success:function(res){
+                    console.log(res)
+                    if (res['code']==40){
+                        location.reload()
+                    }else{
+                        window.location.href='/index'
+
+                    }
+                    
+                }
+            })
+        }else{
+            console.log('false')
+
+        }
+    })
+    $(document).ready(function(){
+        var user=null;
+        var owner=null;
+        $.ajax({
+            url:'/chat',
+            type:'post',
+            data:JSON.stringify({msg:'read'}),
+            contentType:'application/json',
+            dataType:'json',
+            success:function(res){
+                console.log(res)
+                user=res['user']
+                $("#chat_record").html()
+                owner=res['owner']
+                if(owner==user){
+                    $('#leave').html('解散聊天室').addClass('btn-danger')
+                    $(".out").css('display','inline-block')
+                }
+                $.each(res.data,function(i,e){
+                    if(user==e.user__username){
+                        var say=$("<div class='item'><br/><div class='rebubble'>"+e.content+"</div></div>")
+
+                    }else{
+                        var say=$("<div class='item'><span class='glyphicon glyphicon-log-out btn out'></span><span class='speaker'>"+e.user__username+"</span><div class='bubble'>"+e.content+"</div></div>")
+                    }
+                    $(".out").css('display','none')
+
+                    $("#bottom").before(say)
+
+                })
+            }
+        })
+        $.ajax({
+            url:'/files',
+            type:'get',
+            dataType:'json',
+            success:function(res){
+                console.log(res)
+                $.each(res,function(i,e){
+                    $(".list-group").html()
+                    $(".list-group").append(
+                        $("<a href='/static/files/"+e.fname+"' class='list-group-item text-center' download='"+e.fname+"'>"+e.fname+"</a>")
+                    )
+                })
+            }
+
+        })
+        
+
+        $("#btn").click(function(){
+            $.ajax({
+                url:'/chat',
+                type:'post',
+                dataType:'json',
+                contentType:'application/json',
+                data:JSON.stringify({
+                    msg:'say',
+                    message:$("textarea").val()
+                }),
+                beforeSend:function(){
+                    $("#chat_record").append(
+                        $("<div class='item'><br/><span class='ing glyphicon glyphicon-send'></span>"+"<div class='rebubble'>"+$("textarea").val()+"</div></div>")
+                        )
+                },
+                success:function(){
+                    $(".ing").css('display','none');
+                    //让滚动条到最底部
+                    // $(window).scrollTop($('#botm').offset().top);
+                    //$("#chat_record").href('botm')
+                    $("#chat_record").scrollTop($('#bottom').position().top);
+
+                }
+            })
+            $("textarea").val('')
+        })
+        
+       
+    })
+    
+</script>
+</body>
+</html>

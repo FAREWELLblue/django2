@@ -1,0 +1,14 @@
+排查思路:
+uwsgi+diango
+#确保uwsgi关闭的情况下,检查django代码有没有问题
+1 debug=True
+2 python3 manage.py runserver 6000确定程序无错误
+3 浏览器访问127.0.0.1:6000/test_page
+4 debug=False
+    ALLOWED_HOST=['127.0.0.1']检查ip
+5 启动uwsgi[socket] --检查是否启动起来
+
+nginx:
+浏览器访问127.0.0.1:80/test_page
+检查 nginx access log 是否有请求进来
+检查 uwsgi.log,如果没有,则检查nginx配置[页面502-uwsgi启动失败/404-nginx转发配置]

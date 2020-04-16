@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>这是第一个模板</h1>
+    <h1>姓名:  {{ username }} 年龄:{{ age }}</h1>
+    <h1>list:{{ list }}</h1>
+    <h1>list第一个元素{{ list.0 }}</h1>
+
+    <h1> dict:{{ d }}</h1>
+    <h1>dict['title']{{ d.title }}</h1>
+    <h1>func:{{ func }}</h1>
+    <h1>class_obj:{{ class_obj.say }}</h1>
+    <h1>sc:{{ script|safe }}</h1>
+
+
+    {% if age >= 18 %}
+        <h1> 您已成年 </h1>
+    {% else %}
+        <h1> 您未成年 </h1>
+    {% endif %}
+
+
+{% for item in list %}
+    {% if forloop.first %} ====={% endif %}
+    <p>{{ forloop.counter0 }} 姓名:{{ item }}</p>
+    {% if forloop.last %} ||||||||| {% endif%}
+
+    {% empty %}
+        <p>对不起,暂时无数据,请稍后再试</p>
+{% endfor %}
+
+
+</body>
+</html>
