@@ -17,7 +17,7 @@ function get_room_list() {
                 console.log('没有聊天室')
                 console.log(data['data'])
             }else if(data['code']==20){
-                data_obj=JSON.parse(data['data']);
+                data_obj=data['data'];
                 console.log(data_obj)
                 username=data['user'];
                 $("#uname").html(username);
@@ -25,7 +25,7 @@ function get_room_list() {
                     var room=$("<div class='room'><span id='room_name'>"+e.roomname+"</span><br>"+
                         "<div class='owner'>" +
                         "<span id='own'>聊天室管理员:</span>" +
-                        "<span id='owner_id'>"+e.user__username+"</span>" +
+                        "<span id='owner_id'>"+e.owner+"</span>" +
                         "</div></div>");
                     room_list.push(room);
                     $("#left").append(room);
@@ -34,7 +34,7 @@ function get_room_list() {
                             "</div><p id='room_id' style='display:none;'>"+e.id+"</p>" +
                             "<div id='iro'>" +
                             "聊天室管理员：" +
-                            "</div>" +"<div id='iron'>" +e.user__username+
+                            "</div>" +"<div id='iron'>" +e.owner+
                             "</div>"+
                             "</div>" +
                             "<div id='introduce'>" +

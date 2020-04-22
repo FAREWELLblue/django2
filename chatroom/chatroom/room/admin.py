@@ -4,7 +4,7 @@ from .models import *
 # Register your models here.
 
 class RoomManager(admin.ModelAdmin):
-    list_display = ['id','roomname','user','created_time']# 列表显示
+    list_display = ['id','roomname','owner','created_time']# 列表显示
     list_display_links = ['roomname']# 点击跳转的位置
     search_fields = ['roomname','id']#搜索框,参数是搜索的列
 

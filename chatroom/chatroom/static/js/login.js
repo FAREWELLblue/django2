@@ -12,10 +12,12 @@ function (){
             $("#btn").removeAttr('disabled')
             console.log(res);
             if(res['code']=='20'){
+                // alert(res['msg']);
+
                 $(location).attr('href','/index')
             }else{
-                alert(res['msg']);
-                location.reload();
+                var a =alert(res['msg']);
+                window.location.reload()
             }
         },
         beforeSend:function(){

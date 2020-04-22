@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="8fe82b25-73ae-49c9-82c2-ef17828c771a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../chatroom/roomuser/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/alipayTest/payment/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/alipayTest/templates/alipay.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/carts/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/carts/admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/carts/apps.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/carts/migrations/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/carts/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/carts/tests.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/carts/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/carts/views.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/order/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/order/admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/order/apps.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/order/migrations/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/order/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/order/tests.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/order/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../project/dadashop12/order/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatroom/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatroom/chatroom/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/chatroom/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatroom/chatroom/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/chatroom/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatroom/room/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/room/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatroom/room/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/room/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatroom/room/templates/room.html" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/room/templates/room.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatroom/room/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/room/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatroom/room/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/room/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatroom/static/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/static/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatroom/static/js/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/static/js/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatroom/userapp/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/userapp/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../project/dadashop12/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../project/dadashop12/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../project/dadashop12/dadashop12/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../project/dadashop12/dadashop12/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../project/dadashop12/dadashop12/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../project/dadashop12/dadashop12/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../project/dadashop12/dtoken/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../project/dadashop12/dtoken/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../project/dadashop12/goods/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../project/dadashop12/goods/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../project/dadashop12/tools/logging_decorator.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../project/dadashop12/tools/logging_decorator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../project/day01/django-redis-4.10.0/dist/django_redis-4.10.0-py3.6.egg" beforeDir="false" afterPath="$PROJECT_DIR$/../../project/day01/django-redis-4.10.0/dist/django_redis-4.10.0-py3.6.egg" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectId" id="1aknjw0RlshtcEetWhZ17r0u1oz" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../chatroom" />
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8fe82b25-73ae-49c9-82c2-ef17828c771a" name="Default Changelist" comment="" />
+      <created>1587288597191</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1587288597191</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="536" y="220" width="424" height="484" key="FileChooserDialogImpl" timestamp="1587289099483">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state x="536" y="220" width="424" height="484" key="FileChooserDialogImpl/67.27.1373.873@67.27.1373.873" timestamp="1587289099483" />
+  </component>
+</project>

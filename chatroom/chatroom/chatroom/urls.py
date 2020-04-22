@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^user/',include('userapp.urls')),
     url(r'^test$',views.test),
+    url(r'^roomuser/',include('roomuser.urls')),
     url(r'^',include('room.urls')),
 
 ]

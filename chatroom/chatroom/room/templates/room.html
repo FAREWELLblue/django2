@@ -18,21 +18,37 @@
           padding: 5px;
       }
       #leave{
-          float: right;
+          float:left;
       }
-      #out{
+      #dissolution,#send_notice{
+          float:right;
+      }
+      .out{
           position: relative;
-          left:0
+          left:0;
+          display:none;
       }
+      #send_notice_window{
+        width: 40%;
+        background-color: beige;
+        padding: 3%;
+        display: block;
+        border-radius: 15px;
+      }
+
+
     </style>
 </head>
 <body>
     <div class="container">
+        <div id="send_notice_window" class="center-block" >
+        <lable>发布公告：</lable>
+        <textarea class="form-control" style="height: 65%;"></textarea>
+    </div>
         <button class="btn btn-warning" id="leave">退出聊天室</button>
         <header class="text-center">
             {{ roomname }}
-        </header>
-        <div class="row">
+        </header>        <div class="row">
             <div class="col-md-4 col-sm-4 col-xs-4" id="user_list" >
                 <div class="username btn btn-block " id='btn_modify' >
                     <h2 id="uname">{{ username }}</h2>
@@ -41,6 +57,9 @@
                 </div>
                 <div>
                 聊天室成员列表
+                </div>
+                <div class="list-group" id="users-list">
+
                 </div>
             </div>
             <div class="col-md-8 col-sm-8 col-xs-8" id="chat_record">
@@ -54,14 +73,16 @@
         </div>
         <div class="row">
             <div class="col-md-4 col-sm-4 col-xs-4" id="file_list">
-                <div class="list-group">
+                <div>文件列表</div>
+                <div class="list-group" id="files-list">
                     <!-- <a class="list-group-item" href='/static/files/hello.py' download="hello.py"></a> -->
                 </div>
             </div>
             <div class="col-md-8 col-sm-8 col-xs-8" id="text_area">
                 <textarea class="form-control" style="height: 65%;"></textarea>
                 <button id="btn" class="btn btn-info">发送</button>
-                <form action="/upload" method="post"  enctype="multipart/form-data" id='upform'>
+<!--                <form action="/upload" method="post"  enctype="multipart/form-data" id='upform'>-->
+                <form method="post"  enctype="multipart/form-data" id='upform'>
                     <div class="glyphicon glyphicon-floppy-open btn" id='upload'></div>
                     <input type='file' name='myfile' id='up' style="display: none;">
                 </form>
@@ -93,8 +114,12 @@
 				</div>
 			</form>
 		</div>
+
+
 <script>
+
 $("#modify").hide()
+$("#send_notice_window").hide()
 $("#btn_modify").click(function(){
     $(".container").fadeOut(100)
     $("#modify").fadeIn(100)
@@ -103,6 +128,10 @@ $(".cancel").click(function(){
     $("#modify").fadeOut(100)
     $(".container").fadeIn(100)
 })
+var user=null;
+var owner=null;
+var notify=null;
+var users_list=[];
 $('#modify_btn').click(function(){
     $.ajax({
         url:'/user/modify',
@@ -124,12 +153,38 @@ $('#modify_btn').click(function(){
         f=$('#up')
         f.click()
         f.change(function(){
-            console.log(f.val())
-            $("#upform").submit()
+            console.log(f[0].files[0])
+            var formdata=new FormData();
+            formdata.append('file',f[0].files[0])
+            $.ajax({
+                url:'/upload',
+                type:'post',
+                data:formdata,
+                processData:false,// 不处理数据
+                contentType:false,// 不设置内容类型，按原格式传输
+                success:function(res){
+                    console.log(res)
+                    notify.close()
+                },
+                beforeSend:function(){
+                    notify = new Notification(
+                      '上传文件',
+                      {
+                          dir:'auto',
+                          lang:'zh-CN',
+                          tag:0,//实例化的notification的id
+                          title:'上传文件', //通知的标题
+                          body:'文件正在上传请不要刷新浏览器哦' //通知的具体内容
+                      }
+                    );
+                }
+
+
+            })
         })
     })
-    $("#leave").click(function(){
-        // window.location.href='/index'
+    $("#leave").click(function(){window.location.href='/index'})
+    $("#dissolution").click(function(){
         var r=confirm('解散聊天室将同时删除聊天记录和文件.确定解散聊天室?')
         if (r==true){
             console.log('true')
@@ -145,7 +200,7 @@ $('#modify_btn').click(function(){
                         window.location.href='/index'
 
                     }
-                    
+
                 }
             })
         }else{
@@ -154,8 +209,36 @@ $('#modify_btn').click(function(){
         }
     })
     $(document).ready(function(){
-        var user=null;
-        var owner=null;
+        $.ajax({
+            url: 'roomuser/set',
+            type: 'get',
+            dataType: 'json',
+            success: function(res){
+               console.log(res)
+               if (res['code']==404){
+                    var d=alert('您被踢出聊天室')
+                    window.location.href='/index'
+               }
+               $.ajax({
+                    url: 'roomuser/get',
+                    type: 'get',
+                    dataType: 'json',
+                    success: function(res){
+                       console.log(res)
+                       if(res['code']==200){
+                            $.each(res['data'],function(i,e){
+                                $("#users-list").html()
+                                $("#users-list").append($("<a href='#' class='list-group-item text-center'>"+e+"</a>"))
+                                users_list.push(e)
+                            })
+                       }
+                    }
+                })
+            }
+        })
+
+
+
         $.ajax({
             url:'/chat',
             type:'post',
@@ -167,10 +250,7 @@ $('#modify_btn').click(function(){
                 user=res['user']
                 $("#chat_record").html()
                 owner=res['owner']
-                if(owner==user){
-                    $('#leave').html('解散聊天室').addClass('btn-danger')
-                    $(".out").css('display','inline-block')
-                }
+
                 $.each(res.data,function(i,e){
                     if(user==e.user__username){
                         var say=$("<div class='item'><br/><div class='rebubble'>"+e.content+"</div></div>")
@@ -178,11 +258,42 @@ $('#modify_btn').click(function(){
                     }else{
                         var say=$("<div class='item'><span class='glyphicon glyphicon-log-out btn out'></span><span class='speaker'>"+e.user__username+"</span><div class='bubble'>"+e.content+"</div></div>")
                     }
-                    $(".out").css('display','none')
+
 
                     $("#bottom").before(say)
 
                 })
+                if(owner==user){
+                    $(".container").prepend('<button class="btn btn-danger" id="dissolution">解散聊天室</button><button class="btn btn-info" id="send_notice">发布公告</button>')
+                    $()
+                    $("#send_notice").click(function(){
+                        $(".container").css('opacity', '0.5');
+                        $("#send_notice_window").fadeIn(100)
+                    })
+                    $(".out").css('display','inline-block').click(function(){
+                        // console.log($(this).next('span')[0].innerText)
+                        var outname=$(this).next('span')[0].innerText
+                        var c = confirm('是否将'+outname+'踢出当前聊天室？')
+                        if (c){
+                            if(outname in users_list){
+                                $.ajax({
+                                    url:'/roomuser/out?name='+outname,
+                                    type:'post',
+                                    dataType:'json',
+                                    success:function(res){
+                                        console.log(res)
+                                    }
+                                })
+                                showNotification('踢出'+outname,'您将'+outname+'踢出了聊天室','')
+                        }else{
+                              showNotification('踢出失败',outname+'已经不在当前聊天室','')
+                        }
+                    }
+
+
+
+                    })
+                }
             }
         })
         $.ajax({
@@ -191,16 +302,16 @@ $('#modify_btn').click(function(){
             dataType:'json',
             success:function(res){
                 console.log(res)
-                $.each(res,function(i,e){
-                    $(".list-group").html()
-                    $(".list-group").append(
-                        $("<a href='/static/files/"+e.fname+"' class='list-group-item text-center' download='"+e.fname+"'>"+e.fname+"</a>")
+                $.each(res['data'],function(i,e){
+                    $("#files-list").html()
+                    $("#files-list").append(
+                        $("<a href='"+res['path']+e.fname+"' class='list-group-item text-center' download='"+e.fname+"'>"+e.fname+"</a>")
                     )
                 })
             }
 
         })
-        
+
 
         $("#btn").click(function(){
             $.ajax({
@@ -228,10 +339,46 @@ $('#modify_btn').click(function(){
             })
             $("textarea").val('')
         })
-        
-       
+
+
     })
-    
+function showNotification(title,msg,imgUrl){
+  var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+  // 判断浏览器是否支持桌面通知
+  if(Notification){
+      Notification.requestPermission(function(result){
+          //result 默认值'default'等同于拒绝 'denied' -用户选择了拒绝 'granted' -用户同意启用通知
+          if("granted" != result){
+              alert('请授权浏览器能够进行通知!');
+              return false;
+          }else{
+              var tag = "sds"+Math.random();
+              notify = new Notification(
+                  title,
+                  {
+                      dir:'auto',
+                      lang:'zh-CN',
+                      tag:tag,//实例化的notification的id
+                      icon:imgUrl,//通知的缩略图,icon 支持ico、png、jpg、jpeg格式
+                      title:title, //通知的标题
+                      body:msg //通知的具体内容
+                  }
+              );
+              notify.onshow = function () {
+                    setTimeout(function(){
+                        notify.close()
+                    },3000)
+              }
+
+          }
+      });
+  }else{
+      // 提示不支持系统通知
+      alert('您的浏览器不支持系统通知,建议使用Chrome浏览');
+  }
+}
+
+
 </script>
 </body>
 </html>
