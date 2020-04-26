@@ -5,6 +5,7 @@ var $telnumber=$("#telnumber")
 var $msg=$("#uname_msg")
 var $rpmsg=$("#rpwd_msg")
 var $pmsg=$("#pwd_msg")
+var $tmsg=$("#tel_msg")
 var result=false;
 function check_uname(){
     $.ajax({
@@ -35,8 +36,40 @@ $uname.blur(function(){
         $msg.html('请输入用户名')
     }
 })
-
+$('#telnumber').blur(function(){
+    if(check_telnumber()){
+        $("#tel_msg").html('手机号无误').css('color','green')
+    }else{
+        $("#tel_msg").html('手机号无效').css('color','red')
+        
+    }
+})
+function check_telnumber(){
+    tel=$('#telnumber').val();
+    if(tel){
+        $.ajax({
+            type: "get",
+            url: 'http://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel='+tel,
+            dataType: "jsonp",
+            jsonp: "callback",
+            success: function(data){
+            console.log(data);
+            if(data.province){
+                return true
+            }else{
+                return false
+            }
+            },
+            error:function (e){    
+            console.log(e)      
+            }
+        });
+    }
+   
+}
 $("#btn_register").click(function(){
+    
+
     if($uname.val()==''){
         $msg.html('用户名不可为空').css('color','red');
         if($pwd.val()==''){
@@ -50,6 +83,8 @@ $("#btn_register").click(function(){
         alert('请重新输入用户名');
         $msg.html('请重新输入用户名').css('color','red');
         $uname.val('');
+    }else if (!check_telnumber()){
+        alert('请重新输入用户名');
     }
     else{
         console.log(result)

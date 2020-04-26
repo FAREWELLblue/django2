@@ -124,3 +124,5 @@ def modify(request):
     # 写入session
     request.session['username'] = uname
     return HttpResponse(json.dumps({"code": '200', "msg": "修改成功"}))
+
+

@@ -9,5 +9,7 @@ urlpatterns=[
     url(r'^chat$',views.chat),
     url(r'^upload$',views.upload),
     url(r'^files$',views.files),
-    url(r'^leave$',views.leave),
+    url(r'^files/remove',views.remove),
+    url(r'^dissolution',views.dissolution),
+    url(r'^leave',views.leave),
 ]

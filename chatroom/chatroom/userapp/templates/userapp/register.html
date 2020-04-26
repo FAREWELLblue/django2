@@ -47,7 +47,30 @@
         </div>  
     </div>
     <script src="../static/js/register.js"></script>
-
+    <script>
+    $('#telnumber').blur(function(){
+        tel=$('#telnumber').val();
+        if(tel){
+            $.ajax({
+             type: "get",
+             url: 'http://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel='+tel,
+             dataType: "jsonp",
+             jsonp: "callback",
+             success: function(data){
+                console.log(data);
+                if(data.province){
+                    $("#tel_msg").html('手机号无误').css('color','green')
+                }else{
+                    $("#tel_msg").html('手机号无效').css('color','red')
+                }
+             },
+             error:function (e){    
+                console.log(e)      
+             }
+         });
+        }
+    });
+    </script>
     </body>  
 </body>
 </html>

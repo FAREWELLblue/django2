@@ -1,15 +1,17 @@
 import json
 import shutil
 import simplejson
+import redis
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
-
+from roomuser.views import *
 from roomuser.models import RoomUser
 from .models import *
 from userapp.models import User
 from django.conf import settings
 import os
 
+rd=redis.Redis('127.0.0.1',6379,db=5)
 
 # Create your views here.
 def check_login(request):
@@ -76,11 +78,11 @@ def room(request):
         # 录入数据库
         owner = User.objects.get(username=username)
         try:
-            r = Room_list.objects.create(roomname=r_name, introduce=r_intro, owner=owner)
+            room = Room_list.objects.create(roomname=r_name, introduce=r_intro, owner=owner)
         except Exception as e:
             print('新聊天室入库错误', e)
             return HttpResponse(json.dumps({'code': '42', 'msg': '聊天室入库错误'}))
-        os.mkdir(os.path.join(settings.MEDIA_ROOT, f'{r.id}/'))
+        os.mkdir(os.path.join(settings.MEDIA_ROOT, f'{room.id}/'))
         return HttpResponse(json.dumps({"code": '21', 'msg': '创建成功'}))
 
 
@@ -89,6 +91,7 @@ def chat(request):
         return HttpResponseRedirect('/user/login')
 
     if request.method == 'GET':
+        leave(request)
         print(request.GET)
         roomname = request.GET.get('rname')
         uid=request.session.get('uid')
@@ -106,9 +109,8 @@ def chat(request):
         request.session['rid'] = rid
         request.session['ownername'] = oname
         request.session['oid']=oid
-        # 将登录的用户添加到用户列表
-
-        return render(request, 'room.html', {'roomname': roomname, 'username': request.session.get('username')})
+        owner_online='true' if uid==oid else 'false'
+        return render(request, 'room.html', {'roomname': roomname, 'owner_online':owner_online,'username': request.session.get('username')})
     elif request.method == 'POST':
         # 判断请求
         request_json = simplejson.loads(request.body.decode())
@@ -128,19 +130,32 @@ def chat(request):
         elif request_json.get('msg') == 'read':
             r_name = request.session['roomname']
             oname = request.session['ownername']
+            uid=request.session['uid']
+            rid=request.session['rid']
             print('room-name----------', r_name)
-            records = Record.objects.filter(room__roomname=r_name).values('user__username', 'content', 'sent_time')
+            if not rd.exists(f"user{uid}_room{rid}_record"):
+                rd.set(f"user{uid}_room{rid}_record", 0)
+            old_redis_record_id = int(rd.get(f"user{uid}_room{rid}_record").decode())
+            records = Record.objects.filter(room__roomname=r_name).values('id','user__username', 'content', 'sent_time').order_by('-id')
+            print(old_redis_record_id,'redisid')
+            print(records[0]['id'],'recordid')
+            if old_redis_record_id==records[0]['id']:
+                data=[]
+                return JsonResponse({'code': '20', 'data': data, 'user': request.session['username'], 'owner': oname})
+            elif not old_redis_record_id==0:
+                records=[record for record in records if record['id']>old_redis_record_id]
+            data = []
+            for record in reversed(records):
+                item={}
+                item['id']=record['id']
+                item['user__username']=record['user__username']
+                item['content']=record['content']
+                item['sent_time']=record['sent_time'].strftime('%Y-%m-%d %H:%M:%S')
+                data.append(item)
             print(records)
-            if records:
-                records = list(map(dict, records))
-                for record in records:
-                    record['sent_time'] = record['sent_time'].strftime('%Y-%m-%d %H:%M:%S')
-                print(records)
-                return HttpResponse(
-                    json.dumps({'code': '20', 'data': records, 'user': request.session['username'], 'owner': oname}))
-            else:
-                return HttpResponse(
-                    json.dumps({'code': '40', 'msg': '无聊天记录', 'user': request.session['username'], 'owner': oname}))
+            rd.set(f"user{uid}_room{rid}_record", records[0]['id'])
+
+            return JsonResponse({'code': '20', 'data': data, 'user': request.session['username'], 'owner': oname})
         else:
             return HttpResponse(json.dumps({'code': '41', 'msg': '无法识别ajax代码'}))
 
@@ -166,15 +181,33 @@ def upload(request):
 
 def files(request):
     rid = request.session.get('rid')
-    file_list = Files.objects.filter(room_id=rid).values('fname', 'updated_time')
-    file_list = list(map(dict, file_list))
-    for file in file_list:
-        file['updated_time'] = file['updated_time'].strftime('%Y-%m-%d %H:%M:%S')
+    uid=request.session.get('uid')
+    if not rd.exists(f"user{uid}_room{rid}_files"):
+        rd.set(f"user{uid}_room{rid}_files",0)
+    old_redis_files_id=int(rd.get(f"user{uid}_room{rid}_files").decode())
+    file_list = Files.objects.filter(room_id=rid).values('id','fname', 'updated_time').order_by('-id')
+    print(old_redis_files_id,'redisid')
+    print(file_list[0]['id'],'filelistid')
     path=f'/static/files/{rid}/'
-    return JsonResponse({'code':200,'data':file_list,'path':path})
+
+    if old_redis_files_id==file_list[0]['id']:
+        data=[]
+        return JsonResponse({'code': 200, 'data': data, 'path': path})
+    elif not old_redis_files_id == 0:
+        file_list = [file for file in file_list if file['id'] > old_redis_files_id]
+    data = []
+    for file in reversed(file_list):
+        item={}
+        item['id']=file['id']
+        item['fname']=file['fname']
+        item['updated_time']=file['updated_time'].strftime('%Y-%m-%d %H:%M:%S')
+        data.append(item)
+        rd.set(f"user{uid}_room{rid}_files", file_list[0]['id'])
+
+    return JsonResponse({'code':200,'data':data,'path':path})
 
 
-def leave(request):
+def dissolution(request):
     rid = request.session['rid']
     if request.session['ownername'] == request.session['username']:
         try:
@@ -190,4 +223,25 @@ def leave(request):
     return HttpResponse(json.dumps({'code': '21', 'msg': '退出成功'}))
 
 
+def remove(request):
+    rid=request.session['rid']
+    file_id=request.GET.get('file_id')
+    fid=file_id.split('_')[-1]
+    print(fid)
+    file=Files.objects.get(id=int(fid))
+    fname=file.fname
+    os.remove(os.path.join(settings.MEDIA_ROOT, f'{rid}/{fname}'))
+    print('文件删除成功')
+    file.delete()
+    print('文件数据库记录删除成功')
+    return JsonResponse({'code':200,'msg':'删除成功'})
 
+
+def leave(request):
+    # r.flushdb()
+    uid=request.session.get('uid')
+    rid=request.session.get('rid')
+    r.set(f'user{uid}_room{rid}_files',0)
+    r.set(f'user{uid}_room{rid}_record',0)
+    r.set(f'user{uid}_room{rid}_users',0)
+    return JsonResponse({'code':0})
