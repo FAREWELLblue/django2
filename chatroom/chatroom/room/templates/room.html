@@ -204,7 +204,7 @@
         })
         console.log($("#owner_status").html())
         var owner_online = $("#owner_status").html()
-        if ($("#owner_status").html()) {
+        if (owner_online=='true') {
             $("#dissolution").css('display', 'block')
             $("#send_notice").css('display', 'block')
             // $(".give").css('display', 'block').on('click',fun_give)
@@ -315,7 +315,9 @@
             var outname = $(this).next('span')[0].innerText
             var c = confirm('是否将' + outname + '踢出当前聊天室？')
             if (c) {
-                if (outname in users_list) {
+                
+                if (users_list.splice(outname)) {
+                    
                     $.ajax({
                         url: '/roomuser/out?name=' + outname,
                         type: 'post',
@@ -398,8 +400,9 @@
                                 $("#users-list").append($("<li href='#' class='list-group-item text-center'>" + e.username +
                                     "<div class='glyphicon glyphicon-share btn give' id='give_'" + e.id + "'></div>" +
                                     +"</li>"))
-                                users_list.push(e)
-                                if (owner_online) {
+                                users_list.push(e.username)
+                                if (owner_online=='true') {
+                                    console.log('管理在线'+owner_online)
                                     $(".give").unbind()
                                     $(".out").unbind()
                                     $(".remove_files").unbind()
@@ -550,13 +553,13 @@
                 get_record()
                 get_files()
                 get_notice()
-                if (owner_online) {
+                if (owner_online=='true') {
                     $(".give").unbind()
-                                    $(".out").unbind()
-                                    $(".remove_files").unbind()
-                                    $(".give").css('display', 'block').on('click', fun_give)
-                                    $(".out").css('display', 'inline-block').on('click', fun_out)
-                                    $(".remove_files").css('display', 'block').on('click', fun_rmfiles)
+                    $(".out").unbind()
+                    $(".remove_files").unbind()
+                    $(".give").css('display', 'block').on('click', fun_give)
+                    $(".out").css('display', 'inline-block').on('click', fun_out)
+                    $(".remove_files").css('display', 'block').on('click', fun_rmfiles)
 
                 }
             }, 2000)

@@ -9,7 +9,7 @@ class RoomManager(admin.ModelAdmin):
     search_fields = ['roomname','id']#搜索框,参数是搜索的列
 
 class FileManager(admin.ModelAdmin):
-    list_display=['id','fname','fpath','room_id','user_id','updated_time']
+    list_display=['id','fname','fpath','room_id','user_id','upload_time']
     list_display_links=['fname','fpath']
     search_fields=['fname','id']
 class RecordManager(admin.ModelAdmin):

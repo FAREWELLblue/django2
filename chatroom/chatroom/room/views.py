@@ -138,23 +138,26 @@ def chat(request):
             old_redis_record_id = int(rd.get(f"user{uid}_room{rid}_record").decode())
             records = Record.objects.filter(room__roomname=r_name).values('id','user__username', 'content', 'sent_time').order_by('-id')
             print(old_redis_record_id,'redisid')
-            print(records[0]['id'],'recordid')
-            if old_redis_record_id==records[0]['id']:
+            # print(records[0]['id'],'recordid')
+            if records:
+                if old_redis_record_id==records[0]['id']:
+                    data=[]
+                    return JsonResponse({'code': '20', 'data': data, 'user': request.session['username'], 'owner': oname})
+                elif not old_redis_record_id==0:
+                    records=[record for record in records if record['id']>old_redis_record_id]
+                data = []
+                for record in reversed(records):
+                    item={}
+                    item['id']=record['id']
+                    item['user__username']=record['user__username']
+                    item['content']=record['content']
+                    item['sent_time']=record['sent_time'].strftime('%Y-%m-%d %H:%M:%S')
+                    data.append(item)
+                print(records)
+                new_id=records[0]['id'] if records else 0
+                rd.set(f"user{uid}_room{rid}_record", new_id)
+            else:
                 data=[]
-                return JsonResponse({'code': '20', 'data': data, 'user': request.session['username'], 'owner': oname})
-            elif not old_redis_record_id==0:
-                records=[record for record in records if record['id']>old_redis_record_id]
-            data = []
-            for record in reversed(records):
-                item={}
-                item['id']=record['id']
-                item['user__username']=record['user__username']
-                item['content']=record['content']
-                item['sent_time']=record['sent_time'].strftime('%Y-%m-%d %H:%M:%S')
-                data.append(item)
-            print(records)
-            rd.set(f"user{uid}_room{rid}_record", records[0]['id'])
-
             return JsonResponse({'code': '20', 'data': data, 'user': request.session['username'], 'owner': oname})
         else:
             return HttpResponse(json.dumps({'code': '41', 'msg': '无法识别ajax代码'}))
@@ -185,7 +188,7 @@ def files(request):
     if not rd.exists(f"user{uid}_room{rid}_files"):
         rd.set(f"user{uid}_room{rid}_files",0)
     old_redis_files_id=int(rd.get(f"user{uid}_room{rid}_files").decode())
-    file_list = Files.objects.filter(room_id=rid).values('id','fname', 'updated_time').order_by('-id')
+    file_list = Files.objects.filter(room_id=rid).values('id','fname', 'upload_time').order_by('-id')
     print(old_redis_files_id,'redisid')
     print(file_list[0]['id'],'filelistid')
     path=f'/static/files/{rid}/'
@@ -200,7 +203,7 @@ def files(request):
         item={}
         item['id']=file['id']
         item['fname']=file['fname']
-        item['updated_time']=file['updated_time'].strftime('%Y-%m-%d %H:%M:%S')
+        item['upload_time']=file['upload_time'].strftime('%Y-%m-%d %H:%M:%S')
         data.append(item)
         rd.set(f"user{uid}_room{rid}_files", file_list[0]['id'])
 

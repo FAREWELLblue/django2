@@ -37,23 +37,26 @@ def new(request):
     rid = request.session.get('rid')
     uid = request.session.get('uid')
     notices = Notice.objects.filter(room_id=rid).order_by('-id')
+    new_id= notices[0].id if notices else 0
     if not r.exists(f"user{uid}_room{rid}_notice"):
-        r.set(f"user{uid}_room{rid}_notice", notices[0].id)
+        r.set(f"user{uid}_room{rid}_notice", new_id)
     old_redis_notice_id = int(r.get(f"user{uid}_room{rid}_notice").decode())
     notices = Notice.objects.filter(room_id=rid).order_by('-id')
     print(old_redis_notice_id, 'noticeredisid')
-    print(notices[0].id, 'noticeistid')
-    if old_redis_notice_id == notices[0].id:
-        data = []
+    # print(notices[0].id, 'noticeistid')
+    if notices:
+        if old_redis_notice_id == notices[0].id:
+            data = []
+        else:
+            data = []
+            for notice in notices:
+                if notice.id > old_redis_notice_id:
+                    item = {}
+                    item['content'] = notice.content
+                    item['created_time'] = notice.created_time.strftime('%Y-%m-%d %H:%M:%S')
+                    data.append(item)
+        new_id= notices[0].id if notices else 0
+        r.set(f"user{uid}_room{rid}_notice", new_id)
     else:
-        data = []
-
-
-        for notice in notices:
-            if notice.id > old_redis_notice_id:
-                item = {}
-                item['content'] = notice.content
-                item['created_time'] = notice.created_time.strftime('%Y-%m-%d %H:%M:%S')
-                data.append(item)
-    r.set(f"user{uid}_room{rid}_notice",  notices[0].id)
+        data=[]
     return JsonResponse({'code': 200, 'data': data ,'msg':'新的公告'})

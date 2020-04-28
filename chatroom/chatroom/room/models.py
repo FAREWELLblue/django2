@@ -33,7 +33,7 @@ class Record(models.Model):
 class Files(models.Model):
     fname=models.CharField('文件名',max_length=50)
     fpath=models.CharField('文件位置',max_length=70)
-    updated_time=models.DateField('上传时间',auto_now=True)
+    upload_time=models.DateTimeField('上传时间',auto_now=True)
     user=models.ForeignKey(User)
     room=models.ForeignKey(Room_list)
     def __str__(self):
