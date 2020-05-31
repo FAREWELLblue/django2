@@ -8,10 +8,10 @@ class Room_list(models.Model):
     created_time = models.DateTimeField('创建时间', auto_now_add=True)
     updated_time = models.DateTimeField('更新时间', auto_now=True)
     is_active=models.BooleanField('活跃',default=True)
-    owner=models.IntegerField('管理员',default=0)
+    owner=models.ForeignKey(User)
     # user=models.ManyToManyField(User)# 用户列表
     def __str__(self):
-        return f'聊天室名称:{self.roomname},聊天室管理员:{self.owner},聊天室简介:{self.introduce}'
+        return self.roomname
     class Meta:
         verbose_name='聊天室'
         verbose_name_plural='聊天室列表'
@@ -27,8 +27,8 @@ class Record(models.Model):
         return f'{self.user}:{self.content},时间是{self.sent_time}'
     class Meta:
         db_table='record'
-        # verbose_name='聊天记录'
-        # verbose_name_plural=verbose_name
+        verbose_name='聊天记录'
+        verbose_name_plural=verbose_name
 
 class Files(models.Model):
     fname=models.CharField('文件名',max_length=50)
@@ -37,7 +37,7 @@ class Files(models.Model):
     user=models.ForeignKey(User)
     room=models.ForeignKey(Room_list)
     def __str__(self):
-        return f'{self.user}在{self.room}上传{self.fname},存放在{self.fpath}'
+        return self.fname
     class Meta:
         db_table='files'
         verbose_name='文件'

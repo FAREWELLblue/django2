@@ -9,7 +9,7 @@ class User(models.Model):
     is_active = models.BooleanField('是否活跃',default=True)
 
     def __str__(self):
-        return "用户" + self.username
+        return self.username
     class Meta:
         db_table='user'
         verbose_name='用户'

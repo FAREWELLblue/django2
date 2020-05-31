@@ -18,4 +18,4 @@ class RecordManager(admin.ModelAdmin):
     search_fields=['fname','id']
 admin.site.register(Room_list, RoomManager)
 admin.site.register(Files, FileManager)
-admin.site.register(Record, RecordManager)
+# admin.site.register(Record, RecordManager)

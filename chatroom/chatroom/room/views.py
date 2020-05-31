@@ -100,7 +100,7 @@ def chat(request):
         r = Room_list.objects.filter(roomname=roomname)
         if r:
             rid = r[0].id
-            oid = r[0].owner
+            oid = r[0].owner_id
             oname = User.objects.get(id=oid).username
         else:
             # 没有找到这个聊天室

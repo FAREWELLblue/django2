@@ -12,3 +12,5 @@ class Notice(models.Model):
     created_time = models.DateTimeField('发布时间', auto_now_add=True)
     class Meta:
         db_table='notices'
+        verbose_name='公告'
+        verbose_name_plural='公告列表'
